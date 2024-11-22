@@ -1,0 +1,137 @@
+﻿@model Invoici.Models.Invoice
+
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<h2>Create Invoice</h2>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" id="invoiceId" value="@Model.InvoiceId" /> 
+    <!-- Invoice Details -->
+    <div class="form-group">
+        <label asp-for="InvoiceId"></label>
+        <input asp-for="InvoiceId" class="form-control" />
+        <span asp-validation-for="InvoiceId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PartyName"></label>
+        <input asp-for="PartyName" class="form-control" />
+        <span asp-validation-for="PartyName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Date"></label>
+        <input asp-for="Date" class="form-control" readonly />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GSTNumber"></label>
+        <input asp-for="GSTNumber" class="form-control" />
+        <span asp-validation-for="GSTNumber" class="text-danger"></span>
+    </div>
+
+    <!-- Invoice Items -->
+    <h4>Invoice Items</h4>
+    <table id="invoiceItems" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Particular</th>
+                <th>HSN Code</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.InvoiceItems.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @(i + 1)
+
+                    </td>
+                    <td>
+                        <input asp-for="InvoiceItems[@i].Particular" class="form-control" />
+                        <span asp-validation-for="InvoiceItems[@i].Particular" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <input asp-for="InvoiceItems[@i].HSNCode" class="form-control" />
+                        <span asp-validation-for="InvoiceItems[@i].HSNCode" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <input asp-for="InvoiceItems[@i].Quantity" class="form-control quantity" />
+                        <span asp-validation-for="InvoiceItems[@i].Quantity" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <input asp-for="InvoiceItems[@i].Rate" class="form-control rate" />
+                        <span asp-validation-for="InvoiceItems[@i].Rate" class="text-danger"></span>
+                    </td>
+                    <td>
+                        <input asp-for="InvoiceItems[@i].Amount" class="form-control amount" readonly />
+                    </td>
+                    <td>
+                        <input type="hidden" asp-for="InvoiceItems[@i].InvoiceId" />
+                        <button type="button" class="btn btn-danger deleteRow">X</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="form-group mt-3">
+        <button type="button" id="addItem" class="btn btn-success">Add Item</button>
+    </div>
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">Save Invoice</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        // Add a new row dynamically
+        document.getElementById('addItem').addEventListener('click', function () {
+            const table = document.getElementById('invoiceItems').getElementsByTagName('tbody')[0];
+            const rowCount = table.rows.length;
+            const newRow = table.insertRow();
+
+            newRow.innerHTML = `
+                        <td>${rowCount + 1}</td>
+                        <td><input type="text" name="InvoiceItems[${rowCount}].Particular" class="form-control" /></td>
+                        <td><input type="text" name="InvoiceItems[${rowCount}].HSNCode" class="form-control" /></td>
+                        <td><input type="number" name="InvoiceItems[${rowCount}].Quantity" class="form-control quantity" /></td>
+                        <td><input type="number" name="InvoiceItems[${rowCount}].Rate" class="form-control rate" /></td>
+                        <td><input type="number" name="InvoiceItems[${rowCount}].Amount" class="form-control amount" readonly /></td>
+                        <td><button type="button" class="btn btn-danger deleteRow">X</button></td>
+                    `;
+        });
+
+        document.getElementById('invoiceItems').addEventListener('input', function (event) {
+            if (event.target.classList.contains('quantity') || event.target.classList.contains('rate')) {
+                const row = event.target.closest('tr');
+                const quantity = row.querySelector('.quantity').value || 0;
+                const rate = row.querySelector('.rate').value || 0;
+                const amountField = row.querySelector('.amount');
+                amountField.value = (quantity * rate).toFixed(2);
+            }
+        });
+
+        // Delete row dynamically
+        document.getElementById('invoiceItems').addEventListener('click', function (event) {
+            if (event.target.classList.contains('deleteRow')) {
+                const row = event.target.closest('tr');
+                row.remove();
+            }
+        });
+    </script>
+}

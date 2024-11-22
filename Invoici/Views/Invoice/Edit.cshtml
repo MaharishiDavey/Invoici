@@ -1,0 +1,109 @@
+﻿@model Invoici.Models.Invoice
+
+<h2>Edit Invoice</h2>
+
+<form asp-action="Edit" asp-route-id="@Model.InvoiceId" method="post">
+    <input type="hidden" asp-for="InvoiceId" />
+
+    <div class="form-group">
+        <label asp-for="PartyName"></label>
+        <input asp-for="PartyName" class="form-control" />
+        <span asp-validation-for="PartyName" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="Date"></label>
+        <input asp-for="Date" class="form-control" readonly />
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="GSTNumber"></label>
+        <input asp-for="GSTNumber" class="form-control" />
+        <span asp-validation-for="GSTNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <h4>Invoice Items</h4>
+    <table id="invoiceItems" class="table">
+        <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Particular</th>
+                <th>HSN Code</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.InvoiceItems.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td><input asp-for="InvoiceItems[@i].Particular" class="form-control" /></td>
+                    <td><input asp-for="InvoiceItems[@i].HSNCode" class="form-control" /></td>
+                    <td><input asp-for="InvoiceItems[@i].Quantity" class="form-control quantity" /></td>
+                    <td><input asp-for="InvoiceItems[@i].Rate" class="form-control rate" /></td>
+                    <td><input asp-for="InvoiceItems[@i].Amount" class="form-control amount" readonly /></td>
+                    <td>
+                        <input type="hidden" asp-for="InvoiceItems[@i].InvoiceId" />
+                        <button type="button" class="btn btn-danger deleteRow">X</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" id="addItem" class="btn btn-primary">Add Item</button>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        let rowIndex = @Model.InvoiceItems.Count;
+
+        document.getElementById('addItem').addEventListener('click', function () {
+            const tableBody = document.querySelector('#invoiceItems tbody');
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td>${rowIndex + 1}</td>
+                <td><input type="text" name="InvoiceItems[${rowIndex}].Particular" class="form-control" /></td>
+                <td><input type="text" name="InvoiceItems[${rowIndex}].HSNCode" class="form-control" /></td>
+                <td><input type="number" name="InvoiceItems[${rowIndex}].Quantity" class="form-control quantity" /></td>
+                <td><input type="number" name="InvoiceItems[${rowIndex}].Rate" class="form-control rate" /></td>
+                <td><input type="number" name="InvoiceItems[${rowIndex}].Amount" class="form-control amount" readonly /></td>
+                <td><button type="button" class="btn btn-danger deleteRow">X</button></td>
+            `;
+
+            tableBody.appendChild(newRow);
+            rowIndex++;
+        });
+
+        document.getElementById('invoiceItems').addEventListener('input', function (event) {
+            if (event.target.classList.contains('quantity') || event.target.classList.contains('rate')) {
+                const row = event.target.closest('tr');
+                const quantity = row.querySelector('.quantity').value || 0;
+                const rate = row.querySelector('.rate').value || 0;
+                const amountField = row.querySelector('.amount');
+                amountField.value = (quantity * rate).toFixed(2);
+            }
+        });
+
+        document.getElementById('invoiceItems').addEventListener('click', function (event) {
+            if (event.target.classList.contains('deleteRow')) {
+                const row = event.target.closest('tr');
+                row.remove();
+            }
+        });
+    </script>
+}
