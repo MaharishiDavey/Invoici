@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Invoici", "Invoici\Invoici.csproj", "{AFFD909F-119C-4720-B842-3CDBBC116ABC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Invoici", "Invoici\Invoici.csproj", "{AFFD909F-119C-4720-B842-3CDBBC116ABC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Invoici.Utility", "Invoici.Utility\Invoici.Utility.csproj", "{F0F8397B-4BC3-4FE4-8C32-247A98A2AB02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{AFFD909F-119C-4720-B842-3CDBBC116ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFFD909F-119C-4720-B842-3CDBBC116ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFFD909F-119C-4720-B842-3CDBBC116ABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0F8397B-4BC3-4FE4-8C32-247A98A2AB02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0F8397B-4BC3-4FE4-8C32-247A98A2AB02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0F8397B-4BC3-4FE4-8C32-247A98A2AB02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0F8397B-4BC3-4FE4-8C32-247A98A2AB02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

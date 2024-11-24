@@ -23,6 +23,11 @@ namespace Invoici.Data
                 .HasForeignKey(ii => ii.InvoiceId)
                 .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for InvoiceItems when Invoice is deleted
 
+            // Configure precision for Rate property
+            modelBuilder.Entity<InvoiceItem>()
+                .Property(ii => ii.Rate)
+                .HasPrecision(18, 2); // 18 digits in total, 2 after the decimal
+
             // Seed data for Invoice
             modelBuilder.Entity<Invoice>().HasData(
                 new Invoice { InvoiceId = "1", PartyName = "ABC Corporation", Description = "Office Supplies Purchase", Date = DateTime.Now, GSTNumber = "27AABCU9603R1ZV" },
