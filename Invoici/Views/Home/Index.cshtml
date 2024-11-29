@@ -1,8 +1,132 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Invoici.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Section -->
+        <div class="col-md-9" style="overflow-y: auto; height: 100vh;">
+            <!-- Statistics Section -->
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-header">Total Invoices</div>
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.TotalInvoices</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-header">Total Revenue</div>
+                        <div class="card-body">
+                            <h5 class="card-title">$@Model.TotalRevenue</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-header">Total Users</div>
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.TotalUsers</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-danger mb-3">
+                        <div class="card-header">Overdue Invoices</div>
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.OverdueInvoices</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graph Section -->
+            <h3>Monthly Overview</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <canvas id="monthlyInvoicesChart"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="monthlyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section: Chat -->
+        <div class="col-md-3 bg-light" style="position: sticky; top: 0; height: 100vh;">
+            <h4 class="text-center my-3">Chat Section</h4>
+            <ul class="nav nav-tabs" id="chatTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="accountant-tab" data-bs-toggle="tab" href="#accountant" role="tab" aria-controls="accountant" aria-selected="true">Accountant</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="admin-tab" data-bs-toggle="tab" href="#admin" role="tab" aria-controls="admin" aria-selected="false">Admin</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="chatTabContent">
+                <!-- Accountant Chat -->
+                <div class="tab-pane fade show active" id="accountant" role="tabpanel" aria-labelledby="accountant-tab">
+                    <div class="p-3">
+                        <ul class="list-group">
+                            @foreach (var message in Model.AccountantChat)
+                            {
+                                <li class="list-group-item">@message</li>
+                            }
+                        </ul>
+                        <textarea class="form-control mt-3" placeholder="Type a message..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Admin Chat -->
+                <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
+                    <div class="p-3">
+                        <ul class="list-group">
+                            @foreach (var message in Model.AdminChat)
+                            {
+                                <li class="list-group-item">@message</li>
+                            }
+                        </ul>
+                        <textarea class="form-control mt-3" placeholder="Type a message..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Monthly Invoices Chart
+    const invoicesCtx = document.getElementById('monthlyInvoicesChart').getContext('2d');
+    new Chart(invoicesCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Monthly Invoices',
+                data: @Html.Raw(Json.Serialize(Model.MonthlyInvoices)),
+                borderColor: 'blue',
+                fill: false,
+            }]
+        }
+    });
+
+    // Monthly Revenue Chart
+    const revenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Monthly Revenue',
+                data: @Html.Raw(Json.Serialize(Model.MonthlyRevenue)),
+                backgroundColor: 'green',
+            }]
+        }
+    });
+</script>
